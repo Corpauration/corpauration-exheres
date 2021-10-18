@@ -1,0 +1,6 @@
+[Match]
+Name=vlan69
+
+[Network]
+Bridge=br-user
+IPForward=yes

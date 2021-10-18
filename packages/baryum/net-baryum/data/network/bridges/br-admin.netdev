@@ -1,0 +1,3 @@
+[Netdev]
+Name=br-admin
+Kind=bridge

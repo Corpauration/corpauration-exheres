@@ -1,0 +1,7 @@
+[Match]
+Name=e*
+
+[Network]
+VLAN=vlan1337
+VLAN=vlan69
+IPForward=yes

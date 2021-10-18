@@ -1,0 +1,6 @@
+[Match]
+Name=vlan1337
+Kind=vlan
+
+[VLAN]
+Id=1337
