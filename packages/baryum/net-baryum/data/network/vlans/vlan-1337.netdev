@@ -1,5 +1,5 @@
 [Match]
-Name=vlan1337
+Name=vlan-1337
 Kind=vlan
 
 [VLAN]

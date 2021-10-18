@@ -1,5 +1,5 @@
 [Match]
-Name=vlan69
+Name=vlan-69
 
 [Network]
 Bridge=br-user
