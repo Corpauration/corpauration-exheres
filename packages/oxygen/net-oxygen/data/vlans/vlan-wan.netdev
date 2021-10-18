@@ -1,0 +1,6 @@
+[Netdev]
+Name=vlan-wan
+Kind=vlan
+
+[VLAN]
+Id=666

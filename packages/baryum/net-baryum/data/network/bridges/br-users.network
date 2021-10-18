@@ -1,6 +1,6 @@
 [Match]
-Name=br-user
+Name=br-users
 
 [Network]
 Address=10.82.2.40/24
-Gatewat=10.82.2.1
+Gateway=10.82.2.1

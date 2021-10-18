@@ -1,6 +1,0 @@
-[Match]
-Name=vlan69
-Kind=vlan
-
-[VLAN]
-Id=69

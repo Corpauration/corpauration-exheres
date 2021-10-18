@@ -1,5 +1,5 @@
-[Match]
-Name=vlan-1337
+[Netdev]
+Name=vlan-admins
 Kind=vlan
 
 [VLAN]

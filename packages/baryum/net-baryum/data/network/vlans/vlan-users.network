@@ -1,6 +1,6 @@
 [Match]
-Name=vlan-69
+Name=vlan-users
 
 [Network]
-Bridge=br-user
+Bridge=br-users
 IPForward=yes

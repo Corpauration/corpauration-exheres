@@ -1,0 +1,6 @@
+[Match]
+Name=vlan-users
+
+[Network]
+Address=10.82.2.1/24
+Gateway=10.82.2.1

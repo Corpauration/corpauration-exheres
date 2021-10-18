@@ -1,0 +1,6 @@
+[Netdev]
+Name=vlan-gameservers
+Kind=vlan
+
+[VLAN]
+Id=2048
