@@ -1,0 +1,32 @@
+require zsh-completion
+require go github [ user='hashicorp' tag=v${PV} ]
+
+SUMMARY="Packer is a tool for building identical machine images for multiple platforms from a single source configuration."
+PLATFORMS="~amd64"
+LICENCES="MPL-2.0"
+SLOT="0"
+MYOPTIONS=""
+
+DEPENDENCIES=""
+
+ZSH_COMPLETIONS=(
+    "contrib/zsh-completions/_${PN} _${PN}"
+)
+
+unset GOPATH
+
+src_unpack() {
+    default
+
+    edo cd "${WORK}"
+    esandbox disable_net
+    edo go mod download
+    esandbox enable_net
+}
+
+src_install() {
+    emagicdocs
+    dobin packer/packer
+
+    zsh-completion_src_install
+}
