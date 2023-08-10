@@ -1,6 +1,0 @@
-[Netdev]
-Name=vlan-users
-Kind=vlan
-
-[VLAN]
-Id=69

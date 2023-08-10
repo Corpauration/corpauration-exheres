@@ -1,6 +1,0 @@
-[Match]
-Name=vlan-gameservers
-
-[Network]
-Address=10.82.1.1/24
-Gateway=10.82.1.1

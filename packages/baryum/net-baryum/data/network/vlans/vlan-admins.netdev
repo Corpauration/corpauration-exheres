@@ -1,6 +1,0 @@
-[Netdev]
-Name=vlan-admins
-Kind=vlan
-
-[VLAN]
-Id=1337

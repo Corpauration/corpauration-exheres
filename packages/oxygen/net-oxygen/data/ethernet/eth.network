@@ -1,8 +1,0 @@
-[Match]
-Name=e*
-
-[Network]
-VLAN=vlan-admins
-VLAN=vlan-gameservers
-VLAN=vlan-wan
-VLAN=vlan-users
