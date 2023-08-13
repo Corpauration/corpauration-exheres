@@ -1,0 +1,29 @@
+require github [ user='gsauthof' ]
+
+SUMMARY="This Dracut module integrates the OpenSSH sshd into the initramfs."
+PLATFORMS="~amd64"
+SLOT="0"
+MYOPTIONS=""
+
+DEPENDENCIES="
+    run:
+        sys-apps/systemd   
+"
+
+src_prepare() {
+    :
+}
+
+src_configure() {
+    :
+}
+
+src_compile() {
+    :
+}
+
+src_install() {
+    dodir /usr/$(exhost --target)/lib/dracut/modules.d/46sshd
+    insinto /usr/$(exhost --target)/lib/dracut/modules.d/46sshd
+    doins -r 46sshd/* 
+}
