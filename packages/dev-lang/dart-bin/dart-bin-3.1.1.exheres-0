@@ -1,0 +1,32 @@
+SUMMARY="A client-optimized language for fast apps on any platform."
+HOMEPAGE="https://dart.dev/"
+
+# TODO : support multiple arch
+DOWNLOADS="https://storage.googleapis.com/dart-archive/channels/stable/release/${PV}/sdk/dartsdk-linux-x64-release.zip"
+
+PLATFORMS="~amd64"
+LICENCES="BSD-3"
+SLOT="0"
+MYOPTIONS=""
+
+DEPENDENCIES=""
+
+WORK="${WORKBASE}/dart-sdk"
+
+src_compile() {
+	:
+}
+
+src_install() {
+	insinto /usr/$(exhost --target)/lib/dart
+	doins -r *
+
+	edo chmod 755 ${IMAGE}/usr/$(exhost --target)/lib/dart/bin/dart*
+
+	dodir /usr/$(exhost --target)/bin
+	dosym /usr/$(exhost --target)/lib/dart/bin/dart /usr/$(exhost --target)/bin/dart
+	dosym /usr/$(exhost --target)/lib/dart/bin/dartaoruntime /usr/$(exhost --target)/bin/dartaoruntime
+
+	edo echo -e "#!/bin/sh\ndart pub \"\$@\"" > ${IMAGE}/usr/$(exhost --target)/bin/pub
+	edo chmod 755 ${IMAGE}/usr/$(exhost --target)/bin/pub
+}
