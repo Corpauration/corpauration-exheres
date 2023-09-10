@@ -1,0 +1,108 @@
+SUMMARY="Google's SDK for crafting beautiful, fast user experiences for mobile, web, and desktop from a single codebase."
+HOMEPAGE="https://flutter.dev/"
+DOWNLOADS="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${PV}-stable.tar.xz"
+
+PLATFORMS="~amd64"
+LICENCES="BSD-3"
+SLOT="0"
+MYOPTIONS=""
+
+DEPENDENCIES="
+	build+run:
+		dev-lang/dart-bin
+"
+
+WORK="${WORKBASE}/flutter"
+
+src_unpack() {
+	default
+
+	cd flutter
+	edo find . -iname '*.bat' -delete
+	edo find . -iname '*.md' -delete
+	edo rm bin/dart
+	pushd packages/flutter_tools/
+	HOME=../.. edo pub get
+	popd
+	ln -s /usr/$(exhost --target)/lib/dart/ bin/cache/dart-sdk
+	edo dart packages/flutter_tools/bin/flutter_tools.dart > /dev/null
+	bin/flutter precache
+}
+
+src_compile() {
+	:
+}
+
+src_install() {
+	echo '		
+#!/usr/bin/env bash
+
+set -e
+
+# Needed because if it is set, cd may print the path it changed to.
+unset CDPATH
+
+function shared::execute() {
+  export FLUTTER_ROOT="$(cd "${BIN_DIR}/.." ; pwd -P)"
+
+  # If present, run the bootstrap script first
+  BOOTSTRAP_PATH="$FLUTTER_ROOT/bin/internal/bootstrap.sh"
+  if [ -f "$BOOTSTRAP_PATH" ]; then
+    source "$BOOTSTRAP_PATH"
+  fi
+
+  FLUTTER_TOOLS_DIR="$FLUTTER_ROOT/packages/flutter_tools"
+  SNAPSHOT_PATH="$FLUTTER_ROOT/bin/cache/flutter_tools.snapshot"
+  STAMP_PATH="$FLUTTER_ROOT/bin/cache/flutter_tools.stamp"
+  SCRIPT_PATH="$FLUTTER_TOOLS_DIR/bin/flutter_tools.dart"
+  DART_SDK_PATH="$FLUTTER_ROOT/bin/cache/dart-sdk"
+
+  DART="$DART_SDK_PATH/bin/dart"
+
+  if [[ "$EUID" == "0" && ! -f /.dockerenv && "$CI" != "true" && "$BOT" != "true" && "$CONTINUOUS_INTEGRATION" != "true" ]]; then
+    >&2 echo "   Woah! You appear to be trying to run flutter as root."
+    >&2 echo "   We strongly recommend running the flutter tool without superuser privileges."
+    >&2 echo "  /"
+    >&2 echo "📎"
+  fi
+
+  BIN_NAME="$(basename "$PROG_NAME")"
+  case "$BIN_NAME" in
+    flutter*)
+      exec "$DART" --disable-dart-dev --packages="$FLUTTER_TOOLS_DIR/.dart_tool/package_config.json" $FLUTTER_TOOL_ARGS "$SNAPSHOT_PATH" "$@"
+      ;;
+    *)
+      >&2 echo "Error! Executable name $BIN_NAME not recognized!"
+      exit 1
+      ;;
+  esac
+}
+	' > bin/internal/shared.sh
+
+
+	edo rm -r dev/ .git/ 
+	edo rm -r bin/cache/dart-sdk/
+	# edo rm -r bin/cache/{artifacts,dart-sdk,downloads}/
+	# edo rm bin/cache/*.stamp
+
+	ebegin "Installing flutter sdk"
+	insinto /usr/$(exhost --target)/lib/flutter
+	doins -r .*
+	doins -r *
+	eend
+
+	edo chmod 755 ${IMAGE}/usr/$(exhost --target)/lib/flutter/bin/flutter
+	dodir /usr/$(exhost --target)/bin
+	dosym /usr/$(exhost --target)/lib/flutter/bin/flutter /usr/$(exhost --target)/bin/flutter
+}
+
+pkg_postinst() {
+	ln -s /usr/$(exhost --target)/lib/dart/ /usr/$(exhost --target)/lib/flutter/bin/cache/dart-sdk > /dev/null
+	edo chmod 777 /usr/$(exhost --target)/lib/flutter/bin/cache/
+	edo chmod -R 777 /usr/$(exhost --target)/lib/flutter/bin/cache/*
+	edo chmod 777 /usr/$(exhost --target)/lib/flutter/.pub-preload-cache/
+	edo chmod -R 777 /usr/$(exhost --target)/lib/flutter/.pub-preload-cache/*
+	flutter doctor 
+	edo chmod -R 777 /usr/$(exhost --target)/lib/flutter/bin/cache/*
+	edo chmod 777 /usr/$(exhost --target)/lib/flutter/
+}
