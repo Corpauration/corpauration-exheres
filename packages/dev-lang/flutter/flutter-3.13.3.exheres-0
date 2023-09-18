@@ -1,3 +1,5 @@
+require bash-completion
+
 SUMMARY="Google's SDK for crafting beautiful, fast user experiences for mobile, web, and desktop from a single codebase."
 HOMEPAGE="https://flutter.dev/"
 DOWNLOADS="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${PV}-stable.tar.xz"
@@ -5,11 +7,25 @@ DOWNLOADS="https://storage.googleapis.com/flutter_infra_release/releases/stable/
 PLATFORMS="~amd64"
 LICENCES="BSD-3"
 SLOT="0"
-MYOPTIONS=""
+
+CROSS_COMPILE_TARGETS=(
+	linux
+)
+
+MYOPTIONS="
+    ( targets: ${CROSS_COMPILE_TARGETS[@]} )
+"
 
 DEPENDENCIES="
 	build+run:
 		dev-lang/dart-bin
+		x11-dri/glu
+		target:linux? (
+			x11-libs/gtk
+			sys-libs/libstdc++
+			dev-lang/clang
+			app-arch/libarchive
+		) 
 "
 
 WORK="${WORKBASE}/flutter"
@@ -79,6 +95,8 @@ function shared::execute() {
 }
 	' > bin/internal/shared.sh
 
+	bin/${PN} bash-completion "${PN}.bash-completion"
+	dobashcompletion "${PN}.bash-completion"
 
 	edo rm -r dev/ .git/ 
 	edo rm -r bin/cache/dart-sdk/
@@ -102,6 +120,7 @@ pkg_postinst() {
 	edo chmod -R 777 /usr/$(exhost --target)/lib/flutter/bin/cache/*
 	edo chmod 777 /usr/$(exhost --target)/lib/flutter/.pub-preload-cache/
 	edo chmod -R 777 /usr/$(exhost --target)/lib/flutter/.pub-preload-cache/*
+	edo chmod 777 /usr/$(exhost --target)/lib/flutter/packages/flutter_tools/bin/*.sh
 	flutter doctor 
 	edo chmod -R 777 /usr/$(exhost --target)/lib/flutter/bin/cache/*
 	edo chmod 777 /usr/$(exhost --target)/lib/flutter/
